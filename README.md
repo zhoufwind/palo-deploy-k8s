@@ -30,6 +30,4 @@ cd palo-deploy-k8s/docker/be/
 docker build -t palo-be:v0.9.21-2 .
 ```
 
-3. 自己编译PALO、打镜像
-
-编译过程略。
+3. 自己编译PALO、打镜像，编译过程略。
