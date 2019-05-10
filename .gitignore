@@ -1,4 +1,4 @@
 *.tar.gz
 docker/fe/fe/
 docker/be/be/
-fs_brokers/apache_hdfs_broker/
+docker/fs_brokers/apache_hdfs_broker/
