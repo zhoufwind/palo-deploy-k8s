@@ -1,0 +1,112 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: palo-be-service
+  namespace: ns-palo
+  labels:
+    app: palo
+    role: be
+spec:
+  ports:
+    - port: 9060
+      name: be-port
+    - port: 9070
+      name: be-rpc-port
+    - port: 8040
+      name: webserver-port
+    - port: 9050
+      name: heartbeat-service-port
+    - port: 8060
+      name: brpc-port
+  selector:
+    app: palo
+    role: be
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-volume-palo
+  namespace: ns-palo
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data3"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pv-claim-palo
+  namespace: ns-palo
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: palo-be
+  namespace: ns-palo
+  labels:
+    app: palo
+    role: be
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: palo
+  serviceName: palo-be-service
+  template:
+    metadata:
+      labels:
+        app: palo
+        role: be
+    spec:
+      volumes:
+        - name: pv-storage-palo
+          persistentVolumeClaim:
+            claimName: pv-claim-palo
+      containers:
+        - name: palo-be
+          image: palo-be:v0.9.21-2
+          command: ["bash", "-c", "start_be.sh"]
+          ports:
+            - containerPort: 9060
+              protocol: TCP
+            - containerPort: 9070
+              protocol: TCP
+            - containerPort: 8040
+              protocol: TCP
+            - containerPort: 9050
+              protocol: TCP
+            - containerPort: 8060
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /usr/share/palo/be/data
+              name: pv-storage-palo
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: palo
+  name: palo-be-web-service
+  namespace: ns-palo
+spec:
+  type: NodePort
+  ports:
+    - port: 8040
+      targetPort: 8040
+      nodePort: 28040
+  selector:
+    app: palo
