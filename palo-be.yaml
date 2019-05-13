@@ -23,35 +23,6 @@ spec:
     app: palo
     role: be
 ---
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: pv-volume-palo
-  namespace: ns-palo
-  labels:
-    type: local
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 100Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/data3"
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: pv-claim-palo
-  namespace: ns-palo
-spec:
-  storageClassName: manual
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 3Gi
----
 kind: StatefulSet
 apiVersion: apps/v1
 metadata:
