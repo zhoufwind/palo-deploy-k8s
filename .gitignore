@@ -1,3 +1,4 @@
+*.swp
 *.tar.gz
 docker/fe/fe/
 docker/be/be/

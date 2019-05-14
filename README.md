@@ -9,6 +9,9 @@ kubectl apply -f palo-ns.yaml
 
 # 部署BE
 kubectl apply -f palo-be.yaml
+
+# 部署FE
+kubectl apply -f palo-fe.yaml
 ```
 
 ## PALO镜像
@@ -18,16 +21,24 @@ kubectl apply -f palo-be.yaml
 1. 下载镜像，载入本地
 
 ```bash
-docker load < image-palo-be_v0.9.21-2.tar.gz
+docker load < image-palo-be_v0.9.21-3.tar.gz
+docker load < image-palo-fe_v0.9.21-2.tar.gz
 ```
 
 2. 下载编译好的压缩包，自己build镜像
 
 ```bash
+# BE
 wget be_v0.9.21.tar.gz
 tar zxf be_v0.9.21.tar.gz
 cd palo-deploy-k8s/docker/be/
-docker build -t palo-be:v0.9.21-2 .
+docker build -t palo-be:v0.9.21-3 .
+
+# FE
+wget fe_v0.9.21.tar.gz
+tar zxf fe_v0.9.21.tar.gz
+cd palo-deploy-k8s/docker/fe/
+docker build -t palo-fe:v0.9.21-2 .
 ```
 
 3. 自己编译PALO、打镜像，编译过程略。
