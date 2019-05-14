@@ -16,12 +16,14 @@ kubectl apply -f palo-be.yaml
 
 ## 配置PALO集群
 
-通过mysql客户端对FE/BE进行配置：
+通过mysql客户端连接FE控制台：
 
 ```bash
 # 配置BE
 mysql -h <NODE_IP> -P 29030 -uroot
 ```
+
+在FE控制台中配置palo集群：
 
 ```sql
 # 查看FE
