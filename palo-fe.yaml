@@ -2,31 +2,29 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: palo-be-service
+  name: palo-fe-service
   namespace: ns-palo
   labels:
     app: palo
-    role: be
+    role: fe
 spec:
   ports:
-    - port: 9060
-      name: be-port
-    - port: 9070
-      name: be-rpc-port
-    - port: 8040
-      name: webserver-port
-    - port: 9050
-      name: heartbeat-service-port
-    - port: 8060
-      name: brpc-port
+    - port: 8030
+      name: http-port
+    - port: 9020
+      name: rpc-port
+    - port: 9030
+      name: query-port
+    - port: 9010
+      name: edit-log-port
   selector:
     app: palo
-    role: be
+    role: fe
 ---
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: pv-volume-palo-be
+  name: pv-volume-palo-fe
   namespace: ns-palo
   labels:
     type: local
@@ -37,12 +35,12 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/data3/palo-be"
+    path: "/data3/palo-fe"
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pv-claim-palo-be
+  name: pv-claim-palo-fe
   namespace: ns-palo
 spec:
   storageClassName: manual
@@ -55,58 +53,72 @@ spec:
 kind: StatefulSet
 apiVersion: apps/v1
 metadata:
-  name: palo-be
+  name: palo-fe
   namespace: ns-palo
   labels:
     app: palo
-    role: be
+    role: fe
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: palo
-  serviceName: palo-be-service
+  serviceName: palo-fe-service
   template:
     metadata:
       labels:
         app: palo
-        role: be
+        role: fe
     spec:
       volumes:
-        - name: pv-storage-palo-be
+        - name: pv-storage-palo-fe
           persistentVolumeClaim:
-            claimName: pv-claim-palo-be
+            claimName: pv-claim-palo-fe
       containers:
-        - name: palo-be
-          image: palo-be:v0.9.21-3
-          command: ["bash", "-c", "chown -R palo:palo /usr/share/palo/be && exec su palo docker-entrypoint.sh"]
+        - name: palo-fe
+          image: palo-fe:v0.9.21-2
+          command: ["bash", "-c", "exec docker-entrypoint.sh"]
           ports:
-            - containerPort: 9060
+            - containerPort: 8030
               protocol: TCP
-            - containerPort: 9070
+            - containerPort: 9020
               protocol: TCP
-            - containerPort: 8040
+            - containerPort: 9030
               protocol: TCP
-            - containerPort: 9050
-              protocol: TCP
-            - containerPort: 8060
+            - containerPort: 9010
               protocol: TCP
           volumeMounts:
-            - mountPath: /usr/share/palo/be/data
-              name: pv-storage-palo-be
+            - mountPath: /usr/share/palo/fe/palo-meta
+              name: pv-storage-palo-fe
 ---
 kind: Service
 apiVersion: v1
 metadata:
   labels:
     app: palo
-  name: palo-be-web-service
+  name: palo-fe-web-service
   namespace: ns-palo
 spec:
   type: NodePort
   ports:
-    - port: 8040
-      targetPort: 8040
-      nodePort: 28040
+    - port: 8030
+      targetPort: 8030
+      nodePort: 28030
+  selector:
+    app: palo
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: palo
+  name: palo-fe-query-service
+  namespace: ns-palo
+spec:
+  type: NodePort
+  ports:
+    - port: 9030
+      targetPort: 9030
+      nodePort: 29030
   selector:
     app: palo

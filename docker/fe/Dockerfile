@@ -1,4 +1,4 @@
-FROM centos:7.6.1810
+FROM openjdk:8
 
 LABEL maintainer="zhoufeng@hujiang.com"
 
@@ -8,24 +8,18 @@ RUN echo Asia/Shanghai > /etc/timezone
 
 ENV PALO_CONTAINER true
 
-RUN for iter in {1..10}; do yum update -y && \
-    yum install -y nc && \
-    yum clean all && exit_code=0 && break || exit_code=$? && echo "yum error: retry $iter in 10s" && sleep 10; done; \
-    (exit $exit_code)
-
 RUN groupadd -g 1000 palo && \
-    adduser -u 1000 -g 1000 -G 0 -d /usr/share/palo palo && \
+    useradd -u 1000 -g 1000 -d /usr/share/palo -m palo && \
     chmod 0775 /usr/share/palo && \
     chgrp 0 /usr/share/palo
 
-
 WORKDIR /usr/share/palo
-ADD be_v0.9.21.tar.gz /usr/share/palo
-COPY conf/be.conf be/conf/
-RUN mkdir be/data
+ADD fe_v0.9.21.tar.gz /usr/share/palo
+COPY conf/fe.conf fe/conf/
+RUN mkdir fe/palo-meta
 RUN chown -R 1000:0 /usr/share/palo
 
-ENV PATH /usr/share/palo/be/bin:$PATH
+ENV PATH /usr/share/palo/fe/bin:$PATH
 
 COPY --chown=1000:0 bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 

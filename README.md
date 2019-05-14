@@ -7,9 +7,6 @@
 # 创建namespace
 kubectl apply -f palo-ns.yaml
 
-# 创建PVC
-kubectl apply -f palo-pvc.yaml
-
 # 部署BE
 kubectl apply -f palo-be.yaml
 ```
