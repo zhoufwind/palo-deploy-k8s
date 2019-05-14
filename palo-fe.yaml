@@ -76,7 +76,7 @@ spec:
             claimName: pv-claim-palo-fe
       containers:
         - name: palo-fe
-          image: palo-fe:v0.9.21-2
+          image: palo-fe:v0.9.21-3.4
           command: ["bash", "-c", "exec docker-entrypoint.sh"]
           ports:
             - containerPort: 8030

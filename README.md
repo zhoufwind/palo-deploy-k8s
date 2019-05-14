@@ -7,12 +7,32 @@
 # 创建namespace
 kubectl apply -f palo-ns.yaml
 
-# 部署BE
-kubectl apply -f palo-be.yaml
-
 # 部署FE
 kubectl apply -f palo-fe.yaml
+
+# 部署BE
+kubectl apply -f palo-be.yaml
 ```
+
+## 配置PALO集群
+
+通过mysql客户端对FE/BE进行配置：
+
+```bash
+# 配置BE
+mysql -h <NODE_IP> -P 29030 -uroot
+```
+
+```sql
+# 查看FE
+SHOW PROC '/frontends';
+
+# 查看BE
+ALTER SYSTEM ADD BACKEND "<CLUSTER_IP>:9050";
+SHOW PROC '/backends';
+```
+
+通过浏览器访问Palo Web页面：http://<NODE_IP>:28030/
 
 ## PALO镜像
 
@@ -21,24 +41,25 @@ kubectl apply -f palo-fe.yaml
 1. 下载镜像，载入本地
 
 ```bash
-docker load < image-palo-be_v0.9.21-3.tar.gz
-docker load < image-palo-fe_v0.9.21-2.tar.gz
+docker load < image-palo-fe_<tag>.tar.gz
+docker load < image-palo-be_<tag>.tar.gz
 ```
 
 2. 下载编译好的压缩包，自己build镜像
 
 ```bash
-# BE
-wget be_v0.9.21.tar.gz
-tar zxf be_v0.9.21.tar.gz
-cd palo-deploy-k8s/docker/be/
-docker build -t palo-be:v0.9.21-3 .
-
 # FE
+cd palo-deploy-k8s/docker/fe/
 wget fe_v0.9.21.tar.gz
 tar zxf fe_v0.9.21.tar.gz
-cd palo-deploy-k8s/docker/fe/
-docker build -t palo-fe:v0.9.21-2 .
+wget jdk-8u212-linux-x64.tar.gz
+docker build -t palo-fe:<tag> .
+
+# BE
+cd palo-deploy-k8s/docker/be/
+wget be_v0.9.21.tar.gz
+tar zxf be_v0.9.21.tar.gz
+docker build -t palo-be:<tag> .
 ```
 
 3. 自己编译PALO、打镜像，编译过程略。
