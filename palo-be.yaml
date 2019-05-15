@@ -5,8 +5,7 @@ metadata:
   name: palo-be-service
   namespace: ns-palo
   labels:
-    app: palo
-    role: be
+    app: palo-be
 spec:
   ports:
     - port: 9060
@@ -20,8 +19,7 @@ spec:
     - port: 8060
       name: brpc-port
   selector:
-    app: palo
-    role: be
+    app: palo-be
 ---
 kind: PersistentVolume
 apiVersion: v1
@@ -58,19 +56,17 @@ metadata:
   name: palo-be
   namespace: ns-palo
   labels:
-    app: palo
-    role: be
+    app: palo-be
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: palo
+      app: palo-be
   serviceName: palo-be-service
   template:
     metadata:
       labels:
-        app: palo
-        role: be
+        app: palo-be
     spec:
       volumes:
         - name: pv-storage-palo-be
@@ -99,7 +95,7 @@ kind: Service
 apiVersion: v1
 metadata:
   labels:
-    app: palo
+    app: palo-be
   name: palo-be-web-service
   namespace: ns-palo
 spec:
@@ -109,4 +105,4 @@ spec:
       targetPort: 8040
       nodePort: 28040
   selector:
-    app: palo
+    app: palo-be

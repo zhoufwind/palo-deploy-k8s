@@ -5,8 +5,7 @@ metadata:
   name: palo-fe-service
   namespace: ns-palo
   labels:
-    app: palo
-    role: fe
+    app: palo-fe
 spec:
   ports:
     - port: 8030
@@ -18,8 +17,7 @@ spec:
     - port: 9010
       name: edit-log-port
   selector:
-    app: palo
-    role: fe
+    app: palo-fe
 ---
 kind: PersistentVolume
 apiVersion: v1
@@ -56,19 +54,17 @@ metadata:
   name: palo-fe
   namespace: ns-palo
   labels:
-    app: palo
-    role: fe
+    app: palo-fe
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: palo
+      app: palo-fe
   serviceName: palo-fe-service
   template:
     metadata:
       labels:
-        app: palo
-        role: fe
+        app: palo-fe
     spec:
       volumes:
         - name: pv-storage-palo-fe
@@ -95,7 +91,7 @@ kind: Service
 apiVersion: v1
 metadata:
   labels:
-    app: palo
+    app: palo-fe
   name: palo-fe-web-service
   namespace: ns-palo
 spec:
@@ -105,13 +101,13 @@ spec:
       targetPort: 8030
       nodePort: 28030
   selector:
-    app: palo
+    app: palo-fe
 ---
 kind: Service
 apiVersion: v1
 metadata:
   labels:
-    app: palo
+    app: palo-fe
   name: palo-fe-query-service
   namespace: ns-palo
 spec:
@@ -121,4 +117,4 @@ spec:
       targetPort: 9030
       nodePort: 29030
   selector:
-    app: palo
+    app: palo-fe
