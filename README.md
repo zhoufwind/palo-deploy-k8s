@@ -3,6 +3,8 @@
 
 ## 快速部署PALO集群
 
+注：集群用到的所有二进制文件已打包好供下载 https://pan.baidu.com/s/11Hw7I6DnDj4GdftqzgUWRQ
+
 ```bash
 # 创建namespace
 kubectl apply -f palo-ns.yaml
